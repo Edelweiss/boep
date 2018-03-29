@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# ./scan
+
+date
+
+today=`date +%Y-%m-%d`
+
+# ---- update git repository ----
+
+cd idp.data
+git checkout .
+git fetch papyri
+git merge papyri/master
+find . -type f -name '.DS_STORE' -delete
+cd ..
+
+# ---- generate complete list of corrections ----
+
+#java net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:COLLECT -xsl:collect.xsl
+java -Xms1G -Xmx2G net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:BOEP -xsl:start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp
+
+# ---- keep only new corrections since the latest run ----
+
+java net.sf.saxon.Transform -o:ListeDerKorrekturen.html -s:ListeDerKorrekturen_komplett.html -xsl:select.xsl
+
+# ---- copy to archive for logging and reference purposes ----
+
+cp ListeDerKorrekturen.html "archive/$today.html"
+cp ListeDerKorrekturen_komplett.html archive/${today}_komplett.html
+cp ListeDerKorrekturen.html web/ListeDerKorrekturen_${today}.html
+#cp ListeDerKorrekturen_komplett.html archive/latest.html
+
+date
+
+exit 0
