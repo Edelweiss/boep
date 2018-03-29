@@ -20,8 +20,8 @@
 
 ### The html output files
 
-* ListeDerKorrekturen_komplett.html (becomes archive/latest.html
-* ListeDerKorrekturen.html 
+* ListeDerKorrekturen_komplett.html (becomes archive/latest.html)
+* ListeDerKorrekturen.html (the actual boep result file of the current run)
 
 ### Helpful scripts
 
@@ -41,7 +41,7 @@ open ListeDerKorrekturen.html
 ```
 
 and after thorough review finally save latest run
-````
+```
 cp ListeDerKorrekturen_komplett.html archive/latest.html
 ```
 
