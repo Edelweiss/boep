@@ -40,7 +40,7 @@ then view results
 open ListeDerKorrekturen.html
 ```
 
-and afterthorough review finally save latest run
+and after thorough review finally save latest run
 ````
 cp ListeDerKorrekturen_komplett.html archive/latest.html
 ```
