@@ -73,8 +73,8 @@
       edn-structure = default
 
       call BOEP template on P.Mich.9
-      java net.sf.saxon.Transform -o:/Library/WebServer/Documents/tmp/ListeDerKorrekturen_P.Mich.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl ddbFolder=p.mich/p.mich.9 apparatus-style=ddbdp
-      java net.sf.saxon.Transform -o:/Library/WebServer/Documents/tmp/ListeDerKorrekturen_BGU16.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl ddbFolder=bgu/bgu.16 apparatus-style=ddbdp
+      java net.sf.saxon.Transform -o:/Library/WebServer/Documents/tmp/ListeDerKorrekturen_P.Mich.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl subfolder=p.mich/p.mich.9 apparatus-style=ddbdp
+      java net.sf.saxon.Transform -o:/Library/WebServer/Documents/tmp/ListeDerKorrekturen_BGU16.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl subfolder=bgu/bgu.16 apparatus-style=ddbdp
 
       Transform P.Mich.9 directory
       java net.sf.saxon.Transform -o:/Users/Admin/tmp/boep -s:/Users/Admin/idp.data/boep/DDB_EpiDoc_XML/p.mich/p.mich.9 -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl apparatus-style=ddbdp
@@ -85,15 +85,15 @@
       Generate new BEOP (taken vom scan script)
       java -Xms512m -Xmx1536m net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp
       for bgu 4 only
-      java -Xms512m -Xmx1536m net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp ddbFolder=bgu/bgu.4
+      java -Xms512m -Xmx1536m net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp subfolder=bgu/bgu.4
       
    -->
    
    <xsl:include href="helper.xsl"/>
    
    <xsl:param name="idpData" select="'idp.data'"/>
-   <xsl:param name="textFolder" select="'DDB_EpiDoc_XML'"/>
-   <xsl:param name="ddbFolder"/>
+   <xsl:param name="textFolder" select="'DDB_EpiDoc_XML'"/> <!-- DDB_EpiDoc_XML or DCLP -->
+   <xsl:param name="subfolder"/> <!-- e.g bgu for DDB or 1 for DCLP -->
 
    <xsl:template name="BOEP">
       <xsl:variable name="project" select="lower-case(replace($textFolder, '_EpiDoc_XML', ''))"/>
@@ -105,8 +105,8 @@
 
                <xsl:value-of select="concat(' ', $project)"/>
 
-               <xsl:if test="$ddbFolder">
-                  <xsl:value-of select="concat(' ', $ddbFolder)"/>
+               <xsl:if test="$subfolder">
+                  <xsl:value-of select="concat(' ', $subfolder)"/>
                </xsl:if>
             </title>
             <style>
@@ -123,7 +123,7 @@
             <h1>Bulletin of Online Emendations to Papyri (BOEP)</h1>
             <p class="date" style="position: absolute; top: 1em; right: 1em;"><xsl:value-of select="current-dateTime()"/></p>
             
-            <xsl:variable name="sourceFiles" select="concat($idpData, '/', $textFolder, if ($ddbFolder) then concat('/', $ddbFolder) else '', '?select=*.xml;recurse=yes')"/>            
+            <xsl:variable name="sourceFiles" select="concat($idpData, '/', $textFolder, if ($subfolder) then concat('/', $subfolder) else '', '?select=*.xml;recurse=yes')"/>            
             <xsl:message select="substring-before($sourceFiles, '?')"/>
 
             <xsl:for-each select="collection($sourceFiles)//t:ab/t:app[@type='editorial']/t:lem[starts-with(@resp,'PN')]/..">
