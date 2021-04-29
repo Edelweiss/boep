@@ -12,8 +12,10 @@
 
   <xsl:output indent="yes" method="xml" encoding="UTF-8"/>
   
+  <xsl:param name="project" select="'ddb'"/>
+  
   <xsl:variable name="latest">
-    <xsl:sequence select="document('archive/latest.html')//p"/>
+    <xsl:sequence select="document(concat('archive/', if($project = 'dclp')then('_dclp')else(''), 'latest.html'))//p"/>
   </xsl:variable>
 
 <!--

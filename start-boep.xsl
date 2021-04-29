@@ -92,17 +92,22 @@
    <xsl:include href="helper.xsl"/>
    
    <xsl:param name="idpData" select="'idp.data'"/>
+   <xsl:param name="textFolder" select="'DDB_EpiDoc_XML'"/>
    <xsl:param name="ddbFolder"/>
 
    <xsl:template name="BOEP">
+      <xsl:variable name="project" select="lower-case(replace($textFolder, '_EpiDoc_XML', ''))"/>
       <html>
          <head>
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <title>
                <xsl:text>BOEP</xsl:text>
-                  <xsl:if test="$ddbFolder">
-                     <xsl:value-of select="concat(' ', $ddbFolder)"/>
-                  </xsl:if>               
+
+               <xsl:value-of select="concat(' ', $project)"/>
+
+               <xsl:if test="$ddbFolder">
+                  <xsl:value-of select="concat(' ', $ddbFolder)"/>
+               </xsl:if>
             </title>
             <style>
               body { font-family: "Lucida Grande", "Cardo", "Arial Unicode MS","Galilee Unicode Gk", "New Athena Unicode", "Athena Unicode", 
@@ -118,7 +123,7 @@
             <h1>Bulletin of Online Emendations to Papyri (BOEP)</h1>
             <p class="date" style="position: absolute; top: 1em; right: 1em;"><xsl:value-of select="current-dateTime()"/></p>
             
-            <xsl:variable name="sourceFiles" select="concat($idpData, '/DDB_EpiDoc_XML', if ($ddbFolder) then concat('/', $ddbFolder) else '', '?select=*.xml;recurse=yes')"/>            
+            <xsl:variable name="sourceFiles" select="concat($idpData, '/', $textFolder, if ($ddbFolder) then concat('/', $ddbFolder) else '', '?select=*.xml;recurse=yes')"/>            
             <xsl:message select="substring-before($sourceFiles, '?')"/>
 
             <xsl:for-each select="collection($sourceFiles)//t:ab/t:app[@type='editorial']/t:lem[starts-with(@resp,'PN')]/..">
