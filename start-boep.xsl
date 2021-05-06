@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- copied from example-p5-xslt/start-edition.xsl -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-   xmlns:t="http://www.tei-c.org/ns/1.0" 
+   xmlns:t="http://www.tei-c.org/ns/1.0"
+   xmlns:dcterms="http://purl.org/dc/terms/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    exclude-result-prefixes="t" version="2.0">
    <xsl:output indent="yes" method="xml" encoding="UTF-8"/>
 
@@ -95,6 +97,8 @@
    <xsl:param name="textFolder" select="'DDB_EpiDoc_XML'"/> <!-- DDB_EpiDoc_XML or DCLP -->
    <xsl:param name="subfolder"/> <!-- e.g bgu for DDB or 1 for DCLP -->
 
+   <xsl:variable name="COLLECTION" select="doc(concat($idpData, '/RDF/collection.rdf'))"/><!-- maps ddb hybrid (bgu) to nice citation (BGU) -->
+
    <xsl:template name="BOEP">
       <xsl:variable name="project" select="lower-case(replace($textFolder, '_EpiDoc_XML', ''))"/>
       <html>
@@ -122,7 +126,7 @@
          <body>
             <h1>Bulletin of Online Emendations to Papyri (BOEP)</h1>
             <p class="date" style="position: absolute; top: 1em; right: 1em;"><xsl:value-of select="current-dateTime()"/></p>
-            
+
             <xsl:variable name="sourceFiles" select="concat($idpData, '/', $textFolder, if ($subfolder) then concat('/', $subfolder) else '', '?select=*.xml;recurse=yes')"/>            
             <xsl:message select="substring-before($sourceFiles, '?')"/>
 
@@ -130,36 +134,36 @@
                <xsl:variable name="ddb" select="string(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])" />
                <xsl:variable name="tm" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']" />
                <xsl:variable name="url" select="concat('http://papyri.info/ddbdp/', $ddb)" />
-               <xsl:message select="$ddb"/>
                <xsl:variable name="title">
                   <xsl:choose>
-                     <xsl:when test="string(/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:p/t:bibl)">
-                        <xsl:value-of select="/t:TEI/t:teiHeader/t:fileDesc/t:sourceDesc/t:p/t:bibl" />
-                     </xsl:when>
-                     <xsl:when test="starts-with(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], 'sb.')">
-                        <xsl:value-of select="replace(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], 'sb.', 'SB.')" />
+                     <xsl:when test="$textFolder = 'DCLP'">
+                        <xsl:value-of select="$tm"/>
                      </xsl:when>
                      <xsl:otherwise>
-                        <xsl:for-each select="tokenize(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='filename'], '\.')">
-                           <xsl:if test="matches(., '[\d]$')">
-                              <xsl:text> </xsl:text>
-                           </xsl:if>
-                           <xsl:value-of select="upper-case(substring(., 1, 1))" />
-                           <xsl:value-of select="substring(., 2)" />
-                           <xsl:if test="matches(., '[^\d]$')">
-                              <xsl:text>.</xsl:text>
-                           </xsl:if>
-                        </xsl:for-each>
+                        <xsl:variable name="series" select="tokenize($ddb, ';')[1]" />
+                        <xsl:variable name="volume" select="tokenize($ddb, ';')[2]" />
+                        <xsl:variable name="number" select="tokenize($ddb, ';')[3]" />
+                        <xsl:variable name="seriesCanon" select="string($COLLECTION//rdf:Description[ends-with(@rdf:about, concat('ddbdp/', $series))]/dcterms:bibliographicCitation)" />
+                        <xsl:value-of select="$seriesCanon"/>
+                        <xsl:if test="string($volume)">
+                           <xsl:text> </xsl:text>
+                           <xsl:value-of select="$volume"/>
+                        </xsl:if>
+                        <xsl:text> </xsl:text>
+                        <xsl:value-of select="$number"/>
                      </xsl:otherwise>
                   </xsl:choose>
                </xsl:variable>
+
+               <xsl:message select="concat($ddb, ' / ', $tm)"/>
+
                <xsl:variable name="line" select="preceding-sibling::*[name() = 'lb'][position() = 1]/@n" />
                <xsl:variable name="resp" select="substring-after(t:lem/@resp, 'PN ')" />
                <xsl:variable name="lem" select="t:lem" />
                <xsl:variable name="rdg" select="t:rdg" />
                <xsl:variable name="lineTo" select="descendant::t:lb[position() = last()]/@n" />
-               
-               <xsl:message><xsl:text>---- </xsl:text><xsl:value-of select="$url"/><xsl:value-of select="$title"/><xsl:text> (</xsl:text><xsl:value-of select="$url"/><xsl:text>) ----</xsl:text></xsl:message>
+
+               <xsl:message><xsl:text>____ </xsl:text><xsl:value-of select="$url"/><xsl:value-of select="$title"/><xsl:text> (</xsl:text><xsl:value-of select="$url"/><xsl:text>) ____</xsl:text></xsl:message>
                <p>
                   <!-- link to PN -->
                   <span class="ddb">
@@ -171,7 +175,7 @@
 
                   <!-- Main text output -->
                   <xsl:variable name="apparatus"> <!-- cl: copied from htm-tpl-structure.xsl -->
-                    <xsl:call-template name="ddbdp-app"><!-- Found in tpl-apparatus.xsl, take off point for TEI:app[type='editorial'] -->
+                     <xsl:call-template name="ddbdp-app"><!-- Found in tpl-apparatus.xsl, take off point for TEI:app[type='editorial'] -->
                       <xsl:with-param name="apptype" select="'apped'"/>
                     </xsl:call-template>
                   </xsl:variable>
