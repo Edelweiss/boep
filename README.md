@@ -26,6 +26,10 @@
 ### Helpful scripts
 
 * scan (to be called directly from the folder where it resides) 
+  * updates idp.data
+  * calls BOEP template in xslt script star-boep.xsl to collect all emendations
+  * calls xslt script select.xsl 
+  * copies results (komplett and selected) to archive folder
 
 ## Workflow
 
@@ -33,15 +37,19 @@ On L’s MacMini…
 ```
 cd ~/projects/boep
 ./scan
+./scan_dclp
 ```
 
 then view results
 ```
 open ListeDerKorrekturen.html
+open ListeDerKorrekturen_dclp.html
 ```
+(view in browser: [aquila/boep](https://aquila.zaw.uni-heidelberg.de/papy/boep/))
 
 and after thorough review finally save latest run
 ```
 cp ListeDerKorrekturen_komplett.html archive/latest.html
+cp ListeDerKorrekturen_komplett_dclp.html archive_dclp/latest.html
 ```
 
