@@ -15,28 +15,28 @@
   <xsl:param name="project" select="'ddb'"/>
   
   <xsl:variable name="latest">
-    <xsl:sequence select="document(concat('archive/', if($project = 'dclp')then('_dclp')else(''), 'latest.html'))//p"/>
+    <xsl:sequence select="document(concat('archive', if($project = 'dclp')then('_dclp')else(''), '/latest.html'))//p"/>
   </xsl:variable>
 
 <!--
 
 java net.sf.saxon.Transform -o:ListeDerKorrekturen.html -s:ListeDerKorrekturen_komplett.html -xsl:select.xsl
+java net.sf.saxon.Transform -o:ListeDerKorrekturen_dclp.html -s:ListeDerKorrekturen_komplett_dclp.html -xsl:select.xsl
 
 -->
 
   <xsl:template match="p">
-    
+
     <xsl:variable name="href" select="string(span/a/@href)" />
     <xsl:variable name="text" select="text()" />
-    
+
     <xsl:variable name="found" select="$latest//a[@href = $href]/../..[text() = $text]" />
-    
+
     <xsl:message select="'------------------'" />
     <xsl:message select="string(span/a/@href)" />
-    
+
     <!--xsl:message><xsl:copy-of  select="$found" /></xsl:message-->
-    
-    
+
     <xsl:if test="not($found)">
       <xsl:copy>
         <xsl:apply-templates select="@*|node()" />
