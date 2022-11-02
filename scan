@@ -6,15 +6,6 @@ date
 
 today=`date +%Y-%m-%d`
 
-# ---- update git repository ----
-
-cd idp.data
-git checkout .
-git fetch papyri
-git merge papyri/master
-find . -type f -name '.DS_STORE' -delete
-cd ..
-
 # ---- generate complete list of corrections ----
 
 #java net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:COLLECT -xsl:collect.xsl
