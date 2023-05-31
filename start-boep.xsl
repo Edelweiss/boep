@@ -119,8 +119,24 @@
               "Code 2000", "GentiumAlt", "Gentium", "Minion Pro", "GeorgiaGreek", "Vusillus Old Face Italic", 
               "Everson Mono", "Aristarcoj", "Porson", "Legendum", "Aisa Unicode", "Hindsight Unicode", "Caslon", 
               "Verdana", "Tahoma"; }
+              table {
+                border-collapse: collapse;
+              }
+              td.ddb {
+                width: 8em;
+              }
+              td.position {
+                padding: 0 1em 0 1em;
+                text-align: right;
+              }
+              td.apparatus {
+                padding: 0 0 0 1em;
+                border-style: solid;
+                border-width: 0 0 0 1px;
+              }
               .resp { font-style: italic; }
               .date { font-style: italic; font-size: x-small; }
+              
             </style>
          </head>
          <body>
@@ -129,7 +145,8 @@
 
             <xsl:variable name="sourceFiles" select="concat($idpData, '/', $textFolder, if ($subfolder) then concat('/', $subfolder) else '', '?select=*.xml;recurse=yes')"/>            
             <xsl:message select="substring-before($sourceFiles, '?')"/>
-
+            
+            <table>
             <xsl:for-each select="collection($sourceFiles)//t:ab/t:app[@type='editorial']/t:lem[starts-with(@resp,'PN')]/..">
                <xsl:variable name="ddb" select="string(/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='ddb-hybrid'])" />
                <xsl:variable name="tm" select="/t:TEI/t:teiHeader/t:fileDesc/t:publicationStmt/t:idno[@type='TM']" />
@@ -162,38 +179,50 @@
                <xsl:variable name="lem" select="t:lem" />
                <xsl:variable name="rdg" select="t:rdg" />
                <xsl:variable name="lineTo" select="descendant::t:lb[position() = last()]/@n" />
+               <xsl:variable name="apparatus"> <!-- cl: copied from htm-tpl-structure.xsl -->
+                  <xsl:call-template name="ddbdp-app"><!-- Found in tpl-apparatus.xsl, take off point for TEI:app[type='editorial'] -->
+                     <xsl:with-param name="apptype" select="'apped'"/>
+                  </xsl:call-template>
+               </xsl:variable>
+               <xsl:variable name="apparatusPosition" select="normalize-space($apparatus/text()[1])"/>
+               <xsl:variable name="apparatusText" select="$apparatus/text()[1]/following-sibling::*"/>
+               <xsl:variable name="id" select="concat($tm, '|', $ddb, '|', $resp, '|', $apparatus)"/>
 
                <xsl:message><xsl:text>____ </xsl:text><xsl:value-of select="$url"/><xsl:value-of select="$title"/><xsl:text> (</xsl:text><xsl:value-of select="$url"/><xsl:text>) ____</xsl:text></xsl:message>
-               <p>
+               <tr id="{$id}">
                   <!-- link to PN -->
-                  <span class="ddb">
-                     <a href="{$url}" title="TM {$tm}">
-                        <xsl:value-of select="$title" />
-                     </a>
-                  </span>
-                  <xsl:text> </xsl:text>
+                  <td class="ddb">
+                     <span>
+                        <a href="{$url}" title="TM {$tm}">
+                           <xsl:value-of select="$title" />
+                        </a>
+                     </span>
+                  </td>
+                  <td class="position">
+                     <xsl:text> </xsl:text>
+                     <span>
+                        <xsl:value-of select="replace($apparatusPosition, '^(.+)\.$', '$1')" />
+                     </span>
+                  </td>
 
                   <!-- Main text output -->
-                  <xsl:variable name="apparatus"> <!-- cl: copied from htm-tpl-structure.xsl -->
-                     <xsl:call-template name="ddbdp-app"><!-- Found in tpl-apparatus.xsl, take off point for TEI:app[type='editorial'] -->
-                      <xsl:with-param name="apptype" select="'apped'"/>
-                    </xsl:call-template>
-                  </xsl:variable>
-                  <!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
-                  <xsl:apply-templates select="$apparatus" mode="sqbrackets"/>
+                  <td class="apparatus">
+                     <xsl:apply-templates select="$apparatusText" mode="sqbrackets"/><!-- Moded templates found in htm-tpl-sqbrackets.xsl -->
+                     <!-- resp, author -->
+                     <xsl:if test="string($resp)">
+                        <xsl:text>, </xsl:text>
+                        <span class="resp"><xsl:value-of select="replace($resp, '(\((digital image|online image|from image|image|from photograph|photograph|from digital photo|on photo|photo)\))', '(from photo)')"/></span>
+                     </xsl:if>
+                  </td>
 
-                  <!-- resp, author -->
-                  <xsl:if test="string($resp)">
-                     <xsl:text>, </xsl:text>
-                     <xsl:value-of select="$resp"/>
-                  </xsl:if>
-               </p>
+               </tr>
          <!--<xsl:apply-templates select="/" />-->
          <!--<xsl:apply-templates select="/t:TEI/t:text[1]/t:body[1]/t:div/t:ab/t:app[@type='editorial']" />-->
          <!--<xsl:call-template name="ddbdp-app"><!-\- Found in tpl-apparatus.xsl, take off point for TEI:app[type='editorial'] -\->
             <xsl:with-param name="apptype" select="'apped'"/>
          </xsl:call-template>-->
       </xsl:for-each>
+            </table>
 
             <p class="date"><xsl:value-of select="current-dateTime()"/></p>
          </body>

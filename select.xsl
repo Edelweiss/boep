@@ -15,7 +15,7 @@
   <xsl:param name="project" select="'ddb'"/>
   
   <xsl:variable name="latest">
-    <xsl:sequence select="document(concat('archive', if($project = 'dclp')then('_dclp')else(''), '/latest.html'))//p"/>
+    <xsl:sequence select="document(concat('archive', if($project = 'dclp')then('_dclp')else(''), '/latest.html'))//tr"/>
   </xsl:variable>
 
 <!--
@@ -25,15 +25,18 @@ java net.sf.saxon.Transform -o:ListeDerKorrekturen_dclp.html -s:ListeDerKorrektu
 
 -->
 
-  <xsl:template match="p">
+  <xsl:template match="tr">
 
-    <xsl:variable name="href" select="string(span/a/@href)" />
-    <xsl:variable name="text" select="text()" />
+    <!--xsl:variable name="href" select="string(td/span/a/@href)" />
+    <xsl:variable name="text" select="text()" /-->
+    <xsl:variable name="id" select="string(@id)" />
 
-    <xsl:variable name="found" select="$latest//a[@href = $href]/../..[text() = $text]" />
+    <!--xsl:variable name="found" select="$latest//a[@href = $href]/../../..[text() = $text]" /-->
+    <xsl:variable name="found" select="$latest//tr[@id = $id]" />
 
     <xsl:message select="'------------------'" />
-    <xsl:message select="string(span/a/@href)" />
+    <!--xsl:message select="string(span/a/@href)" /-->
+    <xsl:message select="$id" />
 
     <!--xsl:message><xsl:copy-of  select="$found" /></xsl:message-->
 
