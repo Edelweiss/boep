@@ -11,9 +11,9 @@
   exclude-result-prefixes="#all" version="2.0">
 
   <xsl:output indent="yes" method="xml" encoding="UTF-8"/>
-  
+
   <xsl:param name="project" select="'ddb'"/>
-  
+
   <xsl:variable name="latest">
     <xsl:sequence select="document(concat('archive', if($project = 'dclp')then('_dclp')else(''), '/latest.html'))//tr"/>
   </xsl:variable>
@@ -24,25 +24,41 @@ java net.sf.saxon.Transform -o:ListeDerKorrekturen.html -s:ListeDerKorrekturen_k
 java net.sf.saxon.Transform -o:ListeDerKorrekturen_dclp.html -s:ListeDerKorrekturen_komplett_dclp.html -xsl:select.xsl
 
 -->
+  
+  <xsl:template name="TEST">
+    <xsl:variable name="bgu_1_295"><xsl:text>41054|bgu;1;295|N._Gonis_(image)|v.1._  ̣  ̣  ̣  ̣  ̣  ̣  ̣_Ἀ[πόλ]λ̣ω_ποταμίτου_[_-ca.?-_]_→_Παμοῦν̣_υἱọῦ̣_[Ἀπο]λ̣λ̣ῶ_ποταμίτου_χρ(υσίου)_[νο(μισματίου)_α_π(αρὰ)_κ(εράτια)_ζ_𐅵_δ_']_[_-ca.?-_]</xsl:text></xsl:variable>
+    <!--xsl:message select="$latest//tr[starts-with(@id, $bgu_1_295)]"></xsl:message>
+    <xsl:message select="$latest//tr[contains(@id, 'bgu;1;295')]"></xsl:message-->
+    
+    <!--xsl:message select="$latest"></xsl:message-->
+    <xsl:message select="."></xsl:message>
+  </xsl:template>
 
   <xsl:template match="tr">
 
     <!--xsl:variable name="href" select="string(td/span/a/@href)" />
     <xsl:variable name="text" select="text()" /-->
     <xsl:variable name="id" select="string(@id)" />
+    <xsl:variable name="tm" select="string(@data-tm)" />
+    <xsl:variable name="ddb" select="string(@data-ddb)" />
+    <xsl:variable name="resp" select="string(@data-resp)" />
+    <xsl:variable name="apparatus" select="string(@data-apparatus)" />
+    <xsl:message select="'id ', $id"/>
 
     <!--xsl:variable name="found" select="$latest//a[@href = $href]/../../..[text() = $text]" /-->
     <xsl:variable name="found" select="$latest//tr[@id = $id]" />
+    <xsl:variable name="foundSimil" select="$latest//tr[@data-apparatus = $apparatus][@data-tm != $tm or @data-ddb != $ddb or @resp != $resp]" />
 
     <xsl:message select="'------------------'" />
     <!--xsl:message select="string(span/a/@href)" /-->
-    <xsl:message select="$id" />
+    <!--xsl:message select="$id" /-->
 
     <!--xsl:message><xsl:copy-of  select="$found" /></xsl:message-->
 
     <xsl:if test="not($found)">
       <xsl:copy>
         <xsl:apply-templates select="@*|node()" />
+        <td><xsl:if test="$foundSimil">Simil</xsl:if></td>
       </xsl:copy>
     </xsl:if>
   </xsl:template>

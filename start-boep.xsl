@@ -89,6 +89,10 @@
       for bgu 4 only
       java -Xms512m -Xmx1536m net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:BOEP -xsl:/Users/Admin/epidoc/trunk/example-p5-xslt/start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp subfolder=bgu/bgu.4
       
+      Altes git repo zur Initialisierung bei neuem Algorithmus (Achtung: Backslashes rausnehmen [wegen XML-Kommentar]):
+      git checkout "`git rev-list master  -n 1 -\-first-parent -\-before=2022-11-02`"
+      (zurück mit: git checkout master)
+
    -->
    
    <xsl:include href="helper.xsl"/>
@@ -186,10 +190,10 @@
                </xsl:variable>
                <xsl:variable name="apparatusPosition" select="normalize-space($apparatus/text()[1])"/>
                <xsl:variable name="apparatusText" select="$apparatus/text()[1]/following-sibling::*"/>
-               <xsl:variable name="id" select="concat($tm, '|', $ddb, '|', $resp, '|', $apparatus)"/>
+               <xsl:variable name="id" select="concat($tm, '|', $ddb, '|', translate(normalize-space($resp), ' ', '_Llw8'), '|', replace(normalize-space($apparatus), ' ', '_'))"/>
 
                <xsl:message><xsl:text>____ </xsl:text><xsl:value-of select="$url"/><xsl:value-of select="$title"/><xsl:text> (</xsl:text><xsl:value-of select="$url"/><xsl:text>) ____</xsl:text></xsl:message>
-               <tr id="{$id}">
+               <tr id="{$id}" title="{$title}" data-tm="{$tm}" data-ddb="{$ddb}" data-resp="{$resp}" data-apparatus="{$apparatus}">
                   <!-- link to PN -->
                   <td class="ddb">
                      <span>
