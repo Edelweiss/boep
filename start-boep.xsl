@@ -190,7 +190,7 @@
                </xsl:variable>
                <xsl:variable name="apparatusPosition" select="normalize-space($apparatus/text()[1])"/>
                <xsl:variable name="apparatusText" select="$apparatus/text()[1]/following-sibling::*"/>
-               <xsl:variable name="id" select="concat($tm, '|', $ddb, '|', translate(normalize-space($resp), ' ', '_Llw8'), '|', replace(normalize-space($apparatus), ' ', '_'))"/>
+               <xsl:variable name="id" select="concat($tm, '|', $ddb, '|', translate(normalize-space($resp), ' 𝈪𐅵𐅷𐅸', '_Llw8'), '|', replace(normalize-space($apparatus), ' ', '_'))"/>
 
                <xsl:message><xsl:text>____ </xsl:text><xsl:value-of select="$url"/><xsl:value-of select="$title"/><xsl:text> (</xsl:text><xsl:value-of select="$url"/><xsl:text>) ____</xsl:text></xsl:message>
                <tr id="{$id}" title="{$title}" data-tm="{$tm}" data-ddb="{$ddb}" data-resp="{$resp}" data-apparatus="{$apparatus}">
