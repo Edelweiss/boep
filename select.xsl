@@ -48,6 +48,7 @@ java net.sf.saxon.Transform -o:ListeDerKorrekturen_dclp.html -s:ListeDerKorrektu
     <!--xsl:variable name="found" select="$latest//a[@href = $href]/../../..[text() = $text]" /-->
     <xsl:variable name="found" select="$latest//tr[@id = $id]" />
     <xsl:variable name="foundSimil" select="$latest//tr[@data-apparatus = $apparatus][@data-tm != $tm or @data-ddb != $ddb or @resp != $resp]" />
+    <xsl:variable name="foundPeers" select="$latest//tr[@data-tm = $tm or @data-ddb = $ddb]" />
 
     <xsl:message select="'------------------'" />
     <!--xsl:message select="string(span/a/@href)" /-->
@@ -58,7 +59,18 @@ java net.sf.saxon.Transform -o:ListeDerKorrekturen_dclp.html -s:ListeDerKorrektu
     <xsl:if test="not($found)">
       <xsl:copy>
         <xsl:apply-templates select="@*|node()" />
-        <td><xsl:if test="$foundSimil">Simil</xsl:if></td>
+        <td>
+          <xsl:if test="$foundSimil">
+            <xsl:attribute name="title" select="concat('similar entry (probably with slightly different meta data) already exists', $foundSimil)"/>
+            <xsl:text>Simil</xsl:text>
+          </xsl:if>
+        </td>
+        <td>
+          <xsl:if test="$foundPeers">
+            <xsl:attribute name="title" select="concat('peers ', $ddb, ' / TM', $tm)"/>
+            <xsl:text>*</xsl:text>
+          </xsl:if>
+        </td>
       </xsl:copy>
     </xsl:if>
   </xsl:template>
