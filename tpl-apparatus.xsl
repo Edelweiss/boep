@@ -625,8 +625,7 @@
          </xsl:when>
          <!-- *ALT* (repeatable) -->
          <xsl:when test="$apptype='appalt'">
-            <xsl:value-of select="'CL1'"/>
-            <!-- **ALT - <xsl:value-of select="$path/t:rdg"/>** -->
+            <!-- **CL1 ALT - <xsl:value-of select="$path/t:rdg"/>** -->
             <xsl:for-each select="$path/t:rdg">
                <xsl:if test="position()!=1">
                   <xsl:text>,</xsl:text>
