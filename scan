@@ -8,7 +8,7 @@ today=`date +%Y-%m-%d`
 
 # ---- generate complete list of corrections ----
 
-java -Xms1G -Xmx2G net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:BOEP -xsl:start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp
+java -Xms2G -Xmx4G net.sf.saxon.Transform -o:ListeDerKorrekturen_komplett.html -it:BOEP -xsl:start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp
 #java -Xms1G -Xmx2G net.sf.saxon.Transform -o:BGU_komplett.html -it:BOEP -xsl:start-boep.xsl apparatus-style=ddbdp leiden-style=ddbdp subfolder=BGU
 
 # ---- keep only new corrections since the latest run ----
