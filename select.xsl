@@ -61,7 +61,7 @@ java net.sf.saxon.Transform -o:ListeDerKorrekturen_dclp.html -s:ListeDerKorrektu
         <xsl:apply-templates select="@*|node()" />
         <td>
           <xsl:if test="$foundSimil">
-            <xsl:attribute name="title" select="concat('similar entry (probably with slightly different meta data) already exists', $foundSimil)"/>
+            <xsl:attribute name="title" select="concat('similar entry (probably with slightly different meta data) already exists - ', string-join($foundSimil))"/>
             <xsl:text>Simil</xsl:text>
           </xsl:if>
         </td>
