@@ -140,7 +140,16 @@
               }
               .resp { font-style: italic; }
               .date { font-style: italic; font-size: x-small; }
-              
+              img.beehive_link {
+                margin-left: 4px;
+                width: 14px;
+                height: auto;
+              }
+              img.tm_logo {
+                margin-left: 4px;
+                width: 16px;
+                height: auto;
+              }
             </style>
          </head>
          <body>

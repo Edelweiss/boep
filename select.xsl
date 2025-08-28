@@ -71,6 +71,12 @@ java net.sf.saxon.Transform -o:ListeDerKorrekturen_dclp.html -s:ListeDerKorrektu
             <xsl:text>*</xsl:text>
           </xsl:if>
         </td>
+        <td title="TM">
+          <a href="https://www.trismegistos.org/text/{$tm}"><xsl:value-of select="$tm"/><img class="tm_logo" src="https://www.trismegistos.org/img/tm_logo.png" /></a>
+        </td>
+        <td title="Beehive">
+          <a href="https://beehive.zaw.uni-heidelberg.de/tm/{$tm}"><xsl:value-of select="'Beehive'"/><img class="beehive_link" src="https://beehive.zaw.uni-heidelberg.de/images/frontend/punkt.png"/></a>
+        </td>
       </xsl:copy>
     </xsl:if>
   </xsl:template>
